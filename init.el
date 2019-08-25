@@ -4,7 +4,16 @@
    'package-archives
    '("melpa" . "http://melpa.org/packages/")
    t)
-  (package-initialize))
+  (package-initialize)
+  (when (not package-archive-contents)
+    (package-refresh-contents)
+    (package-install 'use-package))
+  (require 'use-package)
+
+  (use-package ensime
+	       :ensure t
+	       :pin melpa-stable)
+  )
 
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.cshtml\\'" . web-mode))
@@ -18,6 +27,13 @@
 (autoload 'octave-mode "octave-mod" nil t)
 (setq auto-mode-alist
       (cons '("\\.m$" . octave-mode) auto-mode-alist))
+
+(add-hook 'octave-mode-hook
+          (lambda ()
+            (abbrev-mode 1)
+            (auto-fill-mode 1)
+            (if (eq window-system 'x)
+                (font-lock-mode 1))))
 
 (add-to-list 'load-path "~/.emacs.d/vendor/jade-mode")
 (require 'sws-mode)
